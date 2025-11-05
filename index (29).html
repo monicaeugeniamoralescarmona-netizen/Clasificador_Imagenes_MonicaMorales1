@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Clasificador de Imágenes</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f2f6fa 0%, #e4ebf3 100%);
+    color: #1a1a1a;
+    text-align: center;
+    padding: 60px;
+  }
+  h1 {
+    color: #0056b3;
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  p.sub {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 25px;
+  }
+  input[type=file] {
+    display: block;
+    margin: 20px auto;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ccd;
+    border-radius: 6px;
+    width: 300px;
+  }
+  button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { background-color: #003d82; }
+  #resultado {
+    margin-top: 25px;
+    font-weight: bold;
+    font-size: 17px;
+    color: #222;
+  }
+  footer {
+    margin-top: 60px;
+    font-size: 13px;
+    color: #777;
+  }
+</style>
+</head>
+<body>
+  <h1>Clasificador de Imágenes</h1>
+  <p class="sub">Sube una imagen para identificar si pertenece a una flor o a otro objeto.</p>
+  <input type="file" id="archivo" accept="image/*">
+  <button onclick="enviar()">Clasificar</button>
+  <p id="resultado">Esperando imagen...</p>
+  <footer>Desarrollado por Mónica Eugenia Morales Carmona — 2025</footer>
+
+<script>
+const API = "https://archaeological-cavillingly-phillip.ngrok-free.dev";
+async function enviar(){
+  let f=document.getElementById('archivo').files[0];
+  if(!f){alert('Selecciona una imagen.');return;}
+  let fd=new FormData();fd.append('file',f);
+  document.getElementById('resultado').innerText='Procesando...';
+  try {
+    let r=await fetch(API+'/predict',{method:'POST',body:fd});
+    let d=await r.json();
+    if(r.ok){
+      document.getElementById('resultado').innerHTML =
+        '<strong>Categoría:</strong> '+d.categoria+
+        '<br><strong>Confianza:</strong> '+(d.confianza*100).toFixed(2)+'%';
+    } else {
+      document.getElementById('resultado').innerText='Error: '+(d.detail||d.error);
+    }
+  } catch(e){
+    document.getElementById('resultado').innerText='Error de conexión: '+e.message;
+  }
+}
+</script>
+</body>
+</html>
