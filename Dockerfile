@@ -1,17 +1,24 @@
-# Imagen base oficial de Python
+# Imagen base
 FROM python:3.10
 
-# Crear y establecer el directorio de trabajo dentro del contenedor
+# Evita que Python guarde bytecode y use buffering
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Google Cloud Run define la variable $PORT automáticamente
+ENV PORT=8080
+
+# Directorio de trabajo
 WORKDIR /app
 
-# Copiar todos los archivos del proyecto dentro del contenedor
+# Copiar archivos del proyecto
 COPY . /app
 
-# Instalar las dependencias necesarias
-RUN pip install tensorflow fastapi uvicorn pillow python-multipart
+# Instalar dependencias
+RUN pip install --no-cache-dir fastapi uvicorn tensorflow pillow python-multipart
 
-# Exponer el puerto donde correrá la API
-EXPOSE 8000
+# Exponer el puerto (solo informativo)
+EXPOSE 8080
 
-# Comando que ejecutará el servidor FastAPI al iniciar el contenedor
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "$PORT"]
+# Comando de ejecución: usa el puerto que Cloud Run le asigne
+CMD exec uvicorn api:app --host 0.0.0.0 --port ${PORT}
