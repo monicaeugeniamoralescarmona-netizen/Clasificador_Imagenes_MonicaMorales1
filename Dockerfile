@@ -14,4 +14,4 @@ RUN pip install tensorflow fastapi uvicorn pillow python-multipart
 EXPOSE 8000
 
 # Comando que ejecutará el servidor FastAPI al iniciar el contenedor
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "$PORT"]
